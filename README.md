@@ -26,6 +26,11 @@ $ npm install -g dotenv-cli
 $ cp ..env.example .env
 ```
 
+### Install app
+```sh
+$ go mod tidy
+```
+
 ### Setup database
 - Run migration
 ```sh
