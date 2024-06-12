@@ -1,12 +1,14 @@
 package main
 
 import (
-	"fastx-api/config"
-	"fastx-api/src/pkg/database"
-	"fastx-api/src/routes"
-	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
-	"os"
+	"net"
+	"order-service/config"
+	"order-service/pb"
+	"order-service/src/pkg/database"
+	"order-service/src/services"
 )
 
 func main() {
@@ -19,18 +21,19 @@ func main() {
 		log.Fatalf("Could not connect to the database: %v", err)
 	}
 
-	// Set up Gin router
-	r := gin.Default()
-
-	// Initialize routes
-	routes.InitializeRoutes(r, db)
-
-	// Run the server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	listener, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		log.Fatalf("failed to listen on port 50051: %v", err)
 	}
-	if err := r.Run(":" + port); err != nil {
-		log.Fatalf("Failed to run server: %v", err)
+
+	grpcServer := grpc.NewServer()
+	userService := services.NewUserService(db)
+	pb.RegisterUserServiceServer(grpcServer, userService)
+
+	reflection.Register(grpcServer)
+
+	log.Println("User Service is running on port 50051")
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("failed to serve gRPC server: %v", err)
 	}
 }

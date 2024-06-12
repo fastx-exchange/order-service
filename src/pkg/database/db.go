@@ -1,11 +1,11 @@
 package database
 
 import (
-	"fastx-api/config"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"order-service/config"
 )
 
 func Connect() (*gorm.DB, error) {
