@@ -23,7 +23,7 @@ $ npm install -g dotenv-cli
 
 - copy .env file from .env.example and then change database configuration
 ```sh
-$ cp .env.example .env
+$ cp ..env.example .env
 ```
 
 ### Setup database
