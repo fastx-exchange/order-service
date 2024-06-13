@@ -31,6 +31,11 @@ $ cp ..env.example .env
 $ go mod tidy
 ```
 
+- Gen from .proto file (example user.proto)
+```sh
+$  protoc --go_out=pb --go-grpc_out=pb proto/user.proto
+```
+
 ### Setup database
 - Run migration
 ```sh

@@ -1,10 +1,14 @@
 package main
 
 import (
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"fmt"
 	"log"
 	"net"
+	"os"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	"order-service/config"
 	"order-service/pb"
 	"order-service/src/pkg/database"
@@ -15,15 +19,21 @@ func main() {
 	// Load configuration
 	config.LoadConfig()
 
+	// Fetch port from environment variable or use a default
+	port := os.Getenv("GRPC_PORT")
+	if port == "" {
+		port = "50051" // Default port
+	}
+
 	// Initialize database connection
 	db, err := database.Connect()
 	if err != nil {
 		log.Fatalf("Could not connect to the database: %v", err)
 	}
 
-	listener, err := net.Listen("tcp", ":50052")
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
-		log.Fatalf("failed to listen on port 50051: %v", err)
+		log.Fatalf("failed to listen on port %s: %v", port, err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -32,7 +42,7 @@ func main() {
 
 	reflection.Register(grpcServer)
 
-	log.Println("User Service is running on port 50051")
+	log.Printf("User Service is running on port %s\n", port)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve gRPC server: %v", err)
 	}
