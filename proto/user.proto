@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "order-service/pb";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc CreateUser(CreateUserRequest) returns (User);
+  rpc GetAllUsers(Empty) returns (Users);
+}
+
+message User {
+  uint32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message Empty {}
+
+message Users {
+  repeated User users = 1;
+}
